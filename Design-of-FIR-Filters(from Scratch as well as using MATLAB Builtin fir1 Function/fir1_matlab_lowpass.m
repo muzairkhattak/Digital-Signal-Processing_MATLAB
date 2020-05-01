@@ -8,22 +8,23 @@ function []=fir1_matlab_lowpass(stopband_edge,passband_edge,sampling_frq)
 %Finding paramaters which have to be passed to fir1()
 
 
-transition_width=((stopband_edge-passband_edge)*2*pi)/sampling_frq
+transition_width=((stopband_edge-passband_edge))
 %Filter Order 
-M = ceil(6.6*pi/transition_width)
+M = ceil(6.1*pi/transition_width)
 if rem( M , 2 )==0
     M = M+1
 end
 
 %normalized cuttoff freq
-normalized_cuttoff=passband_edge/(sampling_frq/2)
+normalized_cuttoff=((passband_edge + transition_width/2))/((sampling_frq/2))
+window=bartlett(M+1)
+b=fir1(M,normalized_cuttoff,window)
 
-b=fir1(M,normalized_cuttoff)
-
-[H,w] = freqz(b,1,1000,'whole') ;
-%fir1_matlab_lowpass(4300,1000,10000)
+[H,w] = freqz(b,1,1000) ;
+%fir1_matlab_lowpass(38,32,200)
 
 plot(w,abs(H))
+title('Corresponding FIR filter')
 xlabel('Low Pass filter , Frequency response')
 ylabel('H(ejw)')
 end
